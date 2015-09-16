@@ -21,11 +21,21 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      build: {
+        files: {
+          'public/dist/minified.js': ['public/lib/jquery.js', 'public/lib/undescore.js','public/lib/backbone.js','public/lib/handlebars.js','public/client/**/*.js']
+        }
+      }
     },
 
     jshint: {
       files: [
-        // Add filespec list here
+        'app/**/*.js',
+        'db/**/*.js',
+        'lib/**/*.js',
+        'server-config.js',
+        'server.js',
+        'public/client/**/*.js'
       ],
       options: {
         force: 'true',
@@ -38,6 +48,11 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
+      target: {
+        files: {
+          'public/dist/style.min.css' : 'public/*.css'
+        }
+      }
         // Add filespec list here
     },
 
@@ -59,7 +74,23 @@ module.exports = function(grunt) {
     },
 
     shell: {
-      prodServer: {
+      gitAdd :{
+        command : 'git add public/dist/minified.js public/dist/style.min.css'
+      },
+      gitCommit : {
+        command : 'git commit -m "commit minified files grunt"'
+      },
+      scaleUp: {
+        command : 'azure site scale mode standard ShortlyApp'
+      },
+      gitPush: {
+        command: 'git push azure master'
+      },
+      logTail: {
+        command: 'azure site log tail ShortlyApp'
+      },
+      scaleDown: {
+        command: 'azure site scale mode free ShortlyApp'
       }
     },
   });
@@ -95,11 +126,18 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    jshint,uglify,cssmin
   ]);
 
+// grunt upload:prod 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
-      // add your production server task here
+      //grunt.task.run(['shell:gitAdd']);
+      //grunt.task.run(['shell:gitCommit']);
+      grunt.task.run(['shell:scaleUp']);
+      grunt.task.run(['shell:gitPush']);
+      //grunt.task.run(['shell:logTail']);
+      grunt.task.run(['shell:scaleDown']);
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
