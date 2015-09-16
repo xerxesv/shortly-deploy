@@ -126,11 +126,13 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    jshint,uglify,cssmin
+    'jshint','uglify','cssmin'
   ]);
 
 // grunt upload:prod 
-  grunt.registerTask('upload', function(n) {
+  grunt.registerTask('deploy', function(n) {
+  //  grunt.task.run('test');
+    grunt.task.requires('test');
     if(grunt.option('prod')) {
       //grunt.task.run(['shell:gitAdd']);
       //grunt.task.run(['shell:gitCommit']);
@@ -142,10 +144,5 @@ module.exports = function(grunt) {
       grunt.task.run([ 'server-dev' ]);
     }
   });
-
-  grunt.registerTask('deploy', [
-      // add your production server task here
-  ]);
-
 
 };
