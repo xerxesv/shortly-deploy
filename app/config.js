@@ -1,6 +1,12 @@
 var mongoose = require('mongoose');
 console.log('Connecting to mongodb');
-mongoose.connect('mongodb://localhost/shortlydb');
+
+if(process.env.NODE_ENV === 'production'){
+  mongoose.connect('mongodb://mongo:mongo@ds040888.mongolab.com:40888/MongoLab2');
+  console.log("connecting to mongo labs");
+} else {
+  mongoose.connect('mongodb://localhost/shortlydb');
+}
 
 var db = {};
 
